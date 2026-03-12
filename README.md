@@ -124,6 +124,7 @@ The project can be assigned at different levels:
   animate the membrane, and scan actuator locations.
 
 ## Repository structure
+<pre>
 .
 ├── handout
 │   ├── handout.aux
@@ -165,3 +166,4 @@ The project can be assigned at different levels:
     │   └── test_reconstruction.cpython-313-pytest-9.0.2.pyc
     ├── test_coupling.py
     └── test_reconstruction.py
+</pre>
