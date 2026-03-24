@@ -99,7 +99,7 @@ def build_model(
         M=M,
         x0=x0,
         y0=y0,
-        gamma = gamma
+        gamma = gamma,
         modes=modes,
         omegas_sq=omegas_sq,
         beta=beta,
