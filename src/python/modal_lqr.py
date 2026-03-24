@@ -12,8 +12,10 @@ from pathlib import Path
 from typing import Iterable, List, Sequence, Tuple
 
 import numpy as np
-from scipy.integrate import solve_ivp
-from scipy.linalg import solve_continuous_are
+from student import solve_ivp, solve_continuous_are
+
+#from scipy.integrate import solve_ivp
+#from scipy.linalg import solve_continuous_are
 
 Mode = Tuple[int, int]
 
@@ -24,6 +26,7 @@ class MembraneModel:
     M: int
     x0: float
     y0: float
+    gamma: float   ##adding gamma
     modes: List[Mode]
     omegas_sq: np.ndarray
     beta: np.ndarray
@@ -69,6 +72,7 @@ def build_model(
     y0: float = 0.61,
     actuator: str = "point",
     sigma: float = 0.06,
+    gamma: float = 0.0,   #adding gamma
 ) -> MembraneModel:
     modes = build_modes(M)
     N = len(modes)
@@ -85,7 +89,7 @@ def build_model(
     A = np.block(
         [
             [np.zeros((N, N)), np.eye(N)],
-            [-np.diag(omegas_sq), np.zeros((N, N))],
+            [-np.diag(omegas_sq), -gamma * np.eye(N)],   #adding damping
         ]
     )
     B = np.vstack([np.zeros((N, 1)), beta.reshape(N, 1)])
@@ -95,6 +99,7 @@ def build_model(
         M=M,
         x0=x0,
         y0=y0,
+        gamma = gamma
         modes=modes,
         omegas_sq=omegas_sq,
         beta=beta,
