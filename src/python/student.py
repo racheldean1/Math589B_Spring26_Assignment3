@@ -27,11 +27,9 @@ def solve_ivp(fun, t_span, y0, t_eval=None, rtol=1e-8, atol=1e-10, **kwargs):   
 
     t_eval = np.array(t_eval, dtype=float)
 
-    # number of state variables
-    n = len(y0)
-
-    # number of time points
-    m = len(t_eval)
+    
+    n = len(y0)        # number of state variables
+    m = len(t_eval)       # number of time points
 
     # storage for solution
     Y = np.zeros((n, m), dtype=float)
@@ -40,15 +38,27 @@ def solve_ivp(fun, t_span, y0, t_eval=None, rtol=1e-8, atol=1e-10, **kwargs):   
     y = y0.copy()
     Y[:, 0] = y
 
-    # Go from one time to the next
-    for j in range(m - 1):
-        t = t_eval[j]
-        h = t_eval[j + 1] - t_eval[j]
+    def rk4_step(t, y, h):        #adding a helper function
         k1 = np.array(fun(t, y), dtype=float)
         k2 = np.array(fun(t + 0.5 * h, y + 0.5 * h * k1), dtype=float)
         k3 = np.array(fun(t + 0.5 * h, y + 0.5 * h * k2), dtype=float)
         k4 = np.array(fun(t + h, y + h * k3), dtype=float)
-        y = y + (h / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)
+        return y + (h / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)
+    
+
+    # Go from one time to the next
+    for j in range(m - 1):
+        t_left = t_eval[j]
+        t_right = t_eval[j + 1]
+        h_total = t_right - t_left
+        nsub = 10            #number of substeps 
+        h = h_total / nsub
+
+        t = t_left
+        for _ in range(nsub):
+            y = rk4_step(t, y, h)
+            t = t + h
+
         Y[:, j + 1] = y
     return SimpleSolution(t_eval, Y)
 
